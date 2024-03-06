@@ -1,4 +1,4 @@
-import sys, nbtlib, json
+import sys, nbtlib, json, pyperclip
 
 schem = nbtlib.load(sys.argv[1])['Schematic']
 
@@ -94,19 +94,27 @@ text_to_numericals = {
 total_commands = schem['Height'] * schem['Length'] * schem['Width']
 
 for y in range(schem['Height']):
-    for z in range(schem['Length'] - 1, -1, -1):
-        for x in range(schem['Width'] - 1, -1, -1):
+  for z in range(schem['Length'] - 1, -1, -1):
+    for x in range(schem['Width'] - 1, -1, -1):
 
-            block_id = list(palette.keys())[list(palette.values()).index(i)]
+      block_id = list(palette.keys())[list(palette.values()).index(i)]
 
-            set_command = "/setblock ~%d ~%d ~%d %s" % (x+offsetx, (y-i)+offsety, z+offsetz, text_to_numericals[block_id])
+      set_command = "/setblock ~%d ~%d ~%d %s" % (
+          x + offsetx,
+          (y - i) + offsety, z + offsetz, text_to_numericals[block_id])
 
-            commands.append(set_command)
+      commands.append(set_command)
 
-            i += 1
+      i += 1
 
 for a in range(total_commands):
-    cmd_nbt = "{id:FallingSand,Block:command_block,Time:1,TileEntityData:{Command:%s},Riding:%s}" % (commands[a], cmd_nbt) if a > 0 else "{id:FallingSand,Block:command_block,Time:1,TileEntityData:{Command:%s}}" % commands[a]
+  cmd_nbt = "{id:FallingSand,Block:command_block,Time:1,TileEntityData:{Command:%s},Riding:%s}" % (
+      commands[a], cmd_nbt
+  ) if a > 0 else "{id:FallingSand,Block:command_block,Time:1,TileEntityData:{Command:%s}}" % commands[
+      a]
 
-p = "/summon FallingSand ~ ~1 ~ {Block:redstone_block,Time:1,Riding:{id:FallingSand,Block:command_block,Time:1,TileEntityData:{Command:/fill ~ ~-%d ~-1 ~ ~%d ~-1 redstone_block},Riding:%s}}" % (total_commands, total_commands, cmd_nbt)
+p = "/summon FallingSand ~ ~1 ~ {Block:redstone_block,Time:1,Riding:{id:FallingSand,Block:command_block,Time:1,TileEntityData:{Command:/fill ~ ~-%d ~-1 ~ ~%d ~-1 redstone_block},Riding:%s}}" % (
+    total_commands, total_commands, cmd_nbt)
 print(p)
+pyperclip.copy(p)
+print("Copied to clipboard!")
